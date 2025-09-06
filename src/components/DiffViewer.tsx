@@ -150,6 +150,16 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                 return element.content;
               };
 
+              const getLineNumber = () => {
+                if (element.type === 'added' && element.new_index !== undefined) {
+                  return element.new_index;
+                }
+                if (element.type === 'unchanged' && element.new_range) {
+                  return element.new_range[0];
+                }
+                return null; // For removed elements, show nothing
+              };
+
               return (
                 <div
                   key={getElementKey()}
@@ -163,7 +173,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                   <div className="flex items-start gap-3">
                     {showLineNumbers && (
                       <div className="flex-shrink-0 w-12 text-xs text-muted-foreground font-mono">
-                        {index + 1}
+                        {getLineNumber() || ''}
                       </div>
                     )}
                     
