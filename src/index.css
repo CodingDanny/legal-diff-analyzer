@@ -2,41 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Legal Document Analyzer Design System - Professional Legal Industry Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
 @layer base {
   :root {
+    /* Legal Industry Color Palette */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 215 25% 15%;
 
+    /* Legal Navy - Primary Brand */
+    --primary: 215 65% 18%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 215 45% 25%;
+    --primary-dark: 215 85% 12%;
+
+    /* Professional Grays */
+    --secondary: 215 15% 92%;
+    --secondary-foreground: 215 25% 20%;
+    
+    --muted: 215 20% 96%;
+    --muted-foreground: 215 15% 45%;
+
+    /* Legal Gold Accents */
+    --accent: 42 87% 55%;
+    --accent-foreground: 215 25% 15%;
+    --accent-light: 42 95% 85%;
+
+    /* Document Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 215 25% 15%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Diff Highlighting Colors */
+    --diff-added: 140 65% 92%;
+    --diff-added-accent: 140 75% 45%;
+    --diff-removed: 0 70% 92%;
+    --diff-removed-accent: 0 75% 50%;
+    --diff-equal: 215 20% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* System Colors */
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 215 20% 88%;
+    --input: 215 20% 96%;
+    --ring: 215 65% 18%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --radius: 0.75rem;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Professional Shadows */
+    --shadow-elegant: 0 4px 20px -2px hsl(215 25% 15% / 0.08);
+    --shadow-document: 0 8px 32px -4px hsl(215 25% 15% / 0.12);
+    --shadow-lift: 0 12px 40px -8px hsl(215 25% 15% / 0.15);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(215 65% 18%), hsl(215 85% 12%));
+    --gradient-accent: linear-gradient(135deg, hsl(42 87% 55%), hsl(42 95% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(215 20% 99%), hsl(215 20% 96%));
 
-    --radius: 0.5rem;
+    /* Typography Scale */
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-serif: 'Crimson Text', Georgia, serif;
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +134,84 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography Classes */
+  .font-display {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .font-document {
+    font-family: var(--font-serif);
+    line-height: 1.6;
+  }
+
+  /* Professional Shadows */
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-document {
+    box-shadow: var(--shadow-document);
+  }
+
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Diff Highlighting Animations */
+  .diff-highlight-enter {
+    animation: diffHighlight 0.6s ease-out;
+  }
+
+  @keyframes diffHighlight {
+    0% { 
+      background-color: transparent;
+      transform: scale(1);
+    }
+    50% { 
+      background-color: hsl(var(--accent-light));
+      transform: scale(1.02);
+    }
+    100% { 
+      background-color: var(--bg-color);
+      transform: scale(1);
+    }
+  }
+
+  /* Custom scrollbar for document views */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground));
   }
 }
