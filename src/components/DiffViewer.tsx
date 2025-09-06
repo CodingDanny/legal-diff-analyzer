@@ -155,7 +155,8 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                   return element.new_index;
                 }
                 if (element.type === 'unchanged' && element.new_range) {
-                  return `${element.new_range[0]}:${element.new_range[1]}`;
+                  const [start, end] = element.new_range;
+                  return start === end ? start : `${start}:${end}`;
                 }
                 return null; // For removed elements, show nothing
               };
