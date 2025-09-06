@@ -6,9 +6,12 @@ import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut } from "lucide-react
 import { cn } from "@/lib/utils";
 
 export interface DiffElement {
-  type: 'EQUAL' | 'ADDED' | 'REMOVED';
-  text: string;
-  id: string;
+  type: 'unchanged' | 'added' | 'removed';
+  content: string | string[];
+  old_index?: number;
+  new_index?: number;
+  old_range?: [number, number];
+  new_range?: [number, number];
 }
 
 interface DiffViewerProps {
@@ -22,36 +25,36 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
   const [showLineNumbers, setShowLineNumbers] = useState(true);
 
   const stats = useMemo(() => {
-    const added = diffData.filter(item => item.type === 'ADDED').length;
-    const removed = diffData.filter(item => item.type === 'REMOVED').length;
-    const equal = diffData.filter(item => item.type === 'EQUAL').length;
+    const added = diffData.filter(item => item.type === 'added').length;
+    const removed = diffData.filter(item => item.type === 'removed').length;
+    const equal = diffData.filter(item => item.type === 'unchanged').length;
     return { added, removed, equal, total: diffData.length };
   }, [diffData]);
 
   const getElementIcon = (type: DiffElement['type']) => {
     switch (type) {
-      case 'ADDED': return <Plus className="h-4 w-4" />;
-      case 'REMOVED': return <Minus className="h-4 w-4" />;
-      case 'EQUAL': return <Equal className="h-4 w-4" />;
+      case 'added': return <Plus className="h-4 w-4" />;
+      case 'removed': return <Minus className="h-4 w-4" />;
+      case 'unchanged': return <Equal className="h-4 w-4" />;
     }
   };
 
   const getElementStyles = (type: DiffElement['type']) => {
     switch (type) {
-      case 'ADDED':
+      case 'added':
         return "bg-diff-added border-l-4 border-diff-added-accent text-foreground";
-      case 'REMOVED':
+      case 'removed':
         return "bg-diff-removed border-l-4 border-diff-removed-accent text-foreground line-through opacity-75";
-      case 'EQUAL':
+      case 'unchanged':
         return "bg-diff-equal border-l-4 border-border text-foreground";
     }
   };
 
   const getBadgeVariant = (type: DiffElement['type']): "default" | "secondary" | "destructive" => {
     switch (type) {
-      case 'ADDED': return "default";
-      case 'REMOVED': return "destructive";
-      case 'EQUAL': return "secondary";
+      case 'added': return "default";
+      case 'removed': return "destructive";
+      case 'unchanged': return "secondary";
     }
   };
 
@@ -72,15 +75,15 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
           
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <Badge variant={getBadgeVariant('ADDED')} className="gap-1">
+              <Badge variant={getBadgeVariant('added')} className="gap-1">
                 <Plus className="h-3 w-3" />
                 {stats.added} Added
               </Badge>
-              <Badge variant={getBadgeVariant('REMOVED')} className="gap-1">
+              <Badge variant={getBadgeVariant('removed')} className="gap-1">
                 <Minus className="h-3 w-3" />
                 {stats.removed} Removed
               </Badge>
-              <Badge variant={getBadgeVariant('EQUAL')} className="gap-1">
+              <Badge variant={getBadgeVariant('unchanged')} className="gap-1">
                 <Equal className="h-3 w-3" />
                 {stats.equal} Unchanged
               </Badge>
@@ -126,46 +129,68 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
         
         <div className="max-h-[70vh] overflow-auto scrollbar-thin">
           <div className="p-6 space-y-1">
-            {diffData.map((element, index) => (
-              <div
-                key={element.id}
-                className={cn(
-                  "relative rounded-md p-4 transition-all duration-200",
-                  "hover:shadow-sm border border-transparent",
-                  getElementStyles(element.type)
-                )}
-                style={{ fontSize: `${fontSize}px` }}
-              >
-                <div className="flex items-start gap-3">
-                  {showLineNumbers && (
-                    <div className="flex-shrink-0 w-12 text-xs text-muted-foreground font-mono">
-                      {index + 1}
-                    </div>
+            {diffData.map((element, index) => {
+              const getElementKey = () => {
+                if (element.type === 'unchanged' && element.new_range) {
+                  return `${element.type}-${element.new_range[0]}-${element.new_range[1]}`;
+                }
+                if (element.type === 'added' && element.new_index !== undefined) {
+                  return `${element.type}-${element.new_index}`;
+                }
+                if (element.type === 'removed' && element.old_index !== undefined) {
+                  return `${element.type}-${element.old_index}`;
+                }
+                return `${element.type}-${index}`;
+              };
+
+              const getDisplayContent = () => {
+                if (Array.isArray(element.content)) {
+                  return element.content.join('\n');
+                }
+                return element.content;
+              };
+
+              return (
+                <div
+                  key={getElementKey()}
+                  className={cn(
+                    "relative rounded-md p-4 transition-all duration-200",
+                    "hover:shadow-sm border border-transparent",
+                    getElementStyles(element.type)
                   )}
-                  
-                  <div className="flex-shrink-0 mt-1 opacity-60">
-                    {getElementIcon(element.type)}
-                  </div>
-                  
-                  <div className="flex-1 font-document leading-relaxed">
-                    {element.text.split('\n').map((line, lineIndex) => (
-                      <div key={lineIndex}>
-                        {line || <br />}
+                  style={{ fontSize: `${fontSize}px` }}
+                >
+                  <div className="flex items-start gap-3">
+                    {showLineNumbers && (
+                      <div className="flex-shrink-0 w-12 text-xs text-muted-foreground font-mono">
+                        {index + 1}
                       </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex-shrink-0">
-                    <Badge 
-                      variant={getBadgeVariant(element.type)} 
-                      className="text-xs"
-                    >
-                      {element.type}
-                    </Badge>
+                    )}
+                    
+                    <div className="flex-shrink-0 mt-1 opacity-60">
+                      {getElementIcon(element.type)}
+                    </div>
+                    
+                    <div className="flex-1 font-document leading-relaxed">
+                      {getDisplayContent().split('\n').map((line, lineIndex) => (
+                        <div key={lineIndex}>
+                          {line || <br />}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="flex-shrink-0">
+                      <Badge 
+                        variant={getBadgeVariant(element.type)} 
+                        className="text-xs"
+                      >
+                        {element.type.toUpperCase()}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Card>
