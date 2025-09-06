@@ -74,14 +74,24 @@ export const mockDiffData: DiffElement[] = [
     new_range: [19, 21]
   },
   {
-    type: "removed",
-    content: "2.2 Termination. Either party may terminate this Agreement with thirty (30) days written notice.",
-    old_index: 20
-  },
-  {
-    type: "added",
-    content: "2.2 Termination. Either party may terminate this Agreement with sixty (60) days written notice, or immediately in case of material breach that remains uncured after thirty (30) days written notice.",
-    new_index: 22
+    type: "modified",
+    old_range: [20, 20],
+    new_range: [22, 22],
+    old_content: [
+      "2.2 Termination. Either party may terminate this Agreement with thirty (30) days written notice."
+    ],
+    new_content: [
+      "2.2 Termination. Either party may terminate this Agreement with sixty (60) days written notice, or immediately in case of material breach that remains uncured after thirty (30) days written notice."
+    ],
+    similarity: 0.68,
+    inline_diff: [
+      [0, "2.2 Termination. Either party may terminate this Agreement with"],
+      [-1, " thirty (30)"],
+      [1, " sixty (60)"],
+      [0, " days written notice"],
+      [1, ", or immediately in case of material breach that remains uncured after thirty (30) days written notice"],
+      [0, "."]
+    ]
   },
   {
     type: "unchanged",
@@ -90,14 +100,23 @@ export const mockDiffData: DiffElement[] = [
     new_range: [23, 25]
   },
   {
-    type: "removed",
-    content: "3.2 Payment Terms. All invoices are due within thirty (30) days of receipt.",
-    old_index: 24
-  },
-  {
-    type: "added",
-    content: "3.2 Payment Terms. All invoices are due within fifteen (15) days of receipt. Late payments will incur a service charge of 1.5% per month.",
-    new_index: 26
+    type: "modified",
+    old_range: [24, 24],
+    new_range: [26, 26],
+    old_content: [
+      "3.2 Payment Terms. All invoices are due within thirty (30) days of receipt."
+    ],
+    new_content: [
+      "3.2 Payment Terms. All invoices are due within fifteen (15) days of receipt. Late payments will incur a service charge of 1.5% per month."
+    ],
+    similarity: 0.74,
+    inline_diff: [
+      [0, "3.2 Payment Terms. All invoices are due within"],
+      [-1, " thirty (30)"],
+      [1, " fifteen (15)"],
+      [0, " days of receipt."],
+      [1, " Late payments will incur a service charge of 1.5% per month."]
+    ]
   },
   {
     type: "added",
@@ -111,10 +130,26 @@ export const mockDiffData: DiffElement[] = [
     new_range: [28, 30]
   },
   {
-    type: "unchanged",
-    content: ["4.2 Non-Disclosure. Each party agrees to maintain the confidentiality of such information and not to disclose it to third parties without written consent."],
-    old_range: [28, 28],
-    new_range: [31, 31]
+    type: "modified",
+    old_range: [28, 28], 
+    new_range: [31, 31],
+    old_content: [
+      "4.2 Non-Disclosure. Each party agrees to maintain the confidentiality of such information and not to disclose it to third parties without written consent."
+    ],
+    new_content: [
+      "4.2 Non-Disclosure. Each party agrees to maintain strict confidentiality of such information and not to disclose it to third parties without prior written consent from the disclosing party."
+    ],
+    similarity: 0.85,
+    inline_diff: [
+      [0, "4.2 Non-Disclosure. Each party agrees to maintain"],
+      [1, " strict"],
+      [0, " confidentiality of such information and not to disclose it to third parties without"],
+      [-1, " written"],
+      [1, " prior written"],
+      [0, " consent"],
+      [1, " from the disclosing party"],
+      [0, "."]
+    ]
   },
   {
     type: "added",
@@ -128,14 +163,25 @@ export const mockDiffData: DiffElement[] = [
     new_range: [33, 35]
   },
   {
-    type: "removed",
-    content: "5.2 Disclaimer. COMPANY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED.",
-    old_index: 32
-  },
-  {
-    type: "added",
-    content: "5.2 Disclaimer. EXCEPT AS EXPRESSLY SET FORTH HEREIN, COMPANY DISCLAIMS ALL OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.",
-    new_index: 36
+    type: "modified",
+    old_range: [32, 32],
+    new_range: [36, 36], 
+    old_content: [
+      "5.2 Disclaimer. COMPANY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED."
+    ],
+    new_content: [
+      "5.2 Disclaimer. EXCEPT AS EXPRESSLY SET FORTH HEREIN, COMPANY DISCLAIMS ALL OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
+    ],
+    similarity: 0.72,
+    inline_diff: [
+      [0, "5.2 Disclaimer."],
+      [1, " EXCEPT AS EXPRESSLY SET FORTH HEREIN,"],
+      [0, " COMPANY DISCLAIMS ALL"],
+      [1, " OTHER"],
+      [0, " WARRANTIES, EXPRESS OR IMPLIED"],
+      [1, ", INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE"],
+      [0, "."]
+    ]
   },
   {
     type: "unchanged",
