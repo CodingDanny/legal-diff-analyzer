@@ -1,44 +1,12 @@
 import { Loader2, FileText, Brain, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { useState, useEffect } from "react";
 
 export const LoadingAnalysis = () => {
-  const [progress, setProgress] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
-
   const steps = [
-    { icon: FileText, text: "Processing documents...", duration: 2000 },
-    { icon: Brain, text: "Analyzing differences...", duration: 2500 },
-    { icon: CheckCircle2, text: "Generating insights...", duration: 1500 }
+    { icon: FileText, text: "Processing documents..." },
+    { icon: Brain, text: "Analyzing differences..." },
+    { icon: CheckCircle2, text: "Generating insights..." }
   ];
-
-  useEffect(() => {
-    const totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + (100 / totalDuration) * 50;
-        return Math.min(newProgress, 100);
-      });
-    }, 50);
-
-    // Step progression
-    let stepTimeout: NodeJS.Timeout;
-    const progressSteps = () => {
-      if (currentStep < steps.length - 1) {
-        stepTimeout = setTimeout(() => {
-          setCurrentStep(prev => prev + 1);
-          progressSteps();
-        }, steps[currentStep].duration);
-      }
-    };
-    progressSteps();
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(stepTimeout);
-    };
-  }, [currentStep, steps]);
 
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -58,35 +26,19 @@ export const LoadingAnalysis = () => {
               Analyzing Your Documents
             </h3>
             
-            <Progress value={progress} className="w-full h-2" />
-            
             <div className="space-y-3">
               {steps.map((step, index) => {
                 const StepIcon = step.icon;
-                const isActive = index === currentStep;
-                const isCompleted = index < currentStep;
                 
                 return (
                   <div
                     key={index}
-                    className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 ${
-                      isActive ? 'bg-accent-light text-accent-foreground' : 
-                      isCompleted ? 'text-muted-foreground' : 'text-muted-foreground/60'
-                    }`}
+                    className="flex items-center gap-3 p-2 rounded-lg text-muted-foreground"
                   >
-                    <div className={`flex-shrink-0 ${
-                      isCompleted ? 'text-diff-added-accent' : 
-                      isActive ? 'text-accent-foreground' : 'text-muted-foreground/60'
-                    }`}>
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-5 w-5" />
-                      ) : (
-                        <StepIcon className={`h-5 w-5 ${isActive ? 'animate-pulse' : ''}`} />
-                      )}
+                    <div className="flex-shrink-0 text-muted-foreground">
+                      <StepIcon className="h-5 w-5" />
                     </div>
-                    <span className={`text-sm font-medium ${
-                      isActive ? 'font-semibold' : ''
-                    }`}>
+                    <span className="text-sm font-medium">
                       {step.text}
                     </span>
                   </div>
