@@ -6,7 +6,7 @@ import { DiffViewer, DiffElement } from "@/components/DiffViewer";
 import { LoadingAnalysis } from "@/components/LoadingAnalysis";
 import { analyzePdfDiff } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Sparkles, Shield, Clock } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import heroImage from "@/assets/legal-hero.jpg";
 interface UploadedFile {
