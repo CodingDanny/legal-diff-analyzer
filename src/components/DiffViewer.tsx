@@ -65,7 +65,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       case 'added':
         return "bg-diff-added border-l-4 border-diff-added-accent text-foreground";
       case 'removed':
-        return "bg-diff-removed border-l-4 border-diff-removed-accent text-foreground line-through opacity-75";
+        return "bg-diff-removed border-l-4 border-diff-removed-accent text-foreground";
       case 'unchanged':
         return "bg-diff-equal border-l-4 border-border text-foreground";
       case 'modified':
@@ -448,7 +448,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                       {getElementIcon(element.type)}
                     </div>
                     
-                    <div className="flex-1 font-document leading-relaxed">
+                    <div className={cn("flex-1 font-document leading-relaxed", element.type === 'removed' && "line-through opacity-75")}>
                       {getDisplayContent().split('\n').map((line, lineIndex) => (
                         <div key={lineIndex}>
                           {line || <br />}
