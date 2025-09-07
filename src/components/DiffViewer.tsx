@@ -96,19 +96,19 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
         return {
           label: 'CRITICAL',
           icon: <AlertTriangle className="h-3 w-3" />,
-          className: 'bg-red-500 text-white border-red-600 hover:bg-red-600'
+          className: 'bg-red-500 text-white border-red-600 hover:bg-red-600 no-underline opacity-100 font-semibold'
         };
       case 'Minor':
         return {
           label: 'MINOR', 
           icon: <Info className="h-3 w-3" />,
-          className: 'bg-yellow-500 text-white border-yellow-600 hover:bg-yellow-600'
+          className: 'bg-yellow-500 text-white border-yellow-600 hover:bg-yellow-600 no-underline opacity-100 font-semibold'
         };
       case 'Formatting':
         return {
           label: 'FORMATTING',
           icon: <Pilcrow className="h-3 w-3" />,
-          className: 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600'
+          className: 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600 no-underline opacity-100 font-semibold'
         };
     }
   };
@@ -328,9 +328,12 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                           {element.classification && (
                             <div 
                               className={cn(
-                                "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                                "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
+                                "decoration-none line-through-none opacity-100 font-bold transform-none",
+                                "shadow-sm border",
                                 getClassificationMeta(element.classification)?.className
                               )}
+                              style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
                             >
                               {getClassificationMeta(element.classification)?.icon}
                               {getClassificationMeta(element.classification)?.label}
@@ -407,9 +410,12 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                           {element.classification && (
                             <div 
                               className={cn(
-                                "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                                "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
+                                "decoration-none line-through-none opacity-100 font-bold transform-none",
+                                "shadow-sm border",
                                 getClassificationMeta(element.classification)?.className
                               )}
+                              style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
                             >
                               {getClassificationMeta(element.classification)?.icon}
                               {getClassificationMeta(element.classification)?.label}
@@ -460,9 +466,12 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                        {element.classification && (
                          <div 
                            className={cn(
-                             "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                             "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
+                             "decoration-none line-through-none opacity-100 font-bold transform-none",
+                             "shadow-sm border",
                              getClassificationMeta(element.classification)?.className
                            )}
+                           style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
                          >
                            {getClassificationMeta(element.classification)?.icon}
                            {getClassificationMeta(element.classification)?.label}
