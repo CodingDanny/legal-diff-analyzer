@@ -16,12 +16,18 @@ export const mockDiffData: DiffElement[] = [
   {
     type: "removed",
     content: "Client XYZ Corporation, a corporation organized under the laws of New York (\"Client\").",
-    old_index: 5
+    old_index: 5,
+    classification: {
+      decision: "Critical"
+    }
   },
   {
     type: "added", 
     content: "Client XYZ International Corporation, a corporation organized under the laws of Delaware with offices in New York and California (\"Client\").",
-    new_index: 5
+    new_index: 5,
+    classification: {
+      decision: "Critical"
+    }
   },
   {
     type: "unchanged",
@@ -32,7 +38,10 @@ export const mockDiffData: DiffElement[] = [
   {
     type: "added",
     content: "WHEREAS, the parties have conducted due diligence and are satisfied with each other's qualifications and standing;",
-    new_index: 11
+    new_index: 11,
+    classification: {
+      decision: "Minor"
+    }
   },
   {
     type: "unchanged",
@@ -54,7 +63,10 @@ export const mockDiffData: DiffElement[] = [
   {
     type: "added",
     content: "(a) Comprehensive corporate law consultation and strategic planning\n(b) Contract review, drafting, and negotiation support\n(c) Regulatory compliance advice and ongoing monitoring\n(d) Intellectual property consultation and filing assistance\n(e) Employment law guidance and policy development",
-    new_index: 16
+    new_index: 16,
+    classification: {
+      decision: "Critical"
+    }
   },
   {
     type: "unchanged",
@@ -65,7 +77,10 @@ export const mockDiffData: DiffElement[] = [
   {
     type: "added",
     content: "1.3 Response Time. Company commits to responding to Client inquiries within 24 hours during business days and within 72 hours on weekends and holidays for urgent matters.",
-    new_index: 18
+    new_index: 18,
+    classification: {
+      decision: "Formatting"
+    }
   },
   {
     type: "unchanged",
@@ -91,7 +106,10 @@ export const mockDiffData: DiffElement[] = [
       [0, " days written notice"],
       [1, ", or immediately in case of material breach that remains uncured after thirty (30) days written notice"],
       [0, "."]
-    ]
+    ],
+    classification: {
+      decision: "Critical"
+    }
   },
   {
     type: "unchanged",
@@ -231,7 +249,10 @@ export const mockDiffData: DiffElement[] = [
       [1, ", proprietary methodologies, and general knowledge gained through the performance of this Agreement"],
       [0, "."],
       [1, "\n\n9.3 License Grant. Company hereby grants Client a perpetual, irrevocable, worldwide license to use, modify, and distribute any Company methodologies or templates incorporated into the work product."]
-    ]
+    ],
+    classification: {
+      decision: "Critical"
+    }
   },
   {
     type: "unchanged",

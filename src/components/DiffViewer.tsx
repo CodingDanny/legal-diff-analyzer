@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight } from "lucide-react";
+import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight, AlertTriangle, Info, Pilcrow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface DiffElement {
@@ -17,6 +17,10 @@ export interface DiffElement {
   new_content?: string | string[];
   similarity?: number;
   inline_diff?: Array<[number, string]>; // [operation, text] where operation: 0=unchanged, 1=added, -1=removed
+  // Classification for changes (all types except unchanged and moved)
+  classification?: {
+    decision: 'Critical' | 'Minor' | 'Formatting';
+  };
 }
 
 interface DiffViewerProps {
@@ -36,7 +40,13 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
     const moved = diffData.filter(item => item.type === 'moved').length;
     const movedAndModified = diffData.filter(item => item.type === 'moved_and_modified').length;
     const equal = diffData.filter(item => item.type === 'unchanged').length;
-    return { added, removed, modified, moved, movedAndModified, equal, total: diffData.length };
+    
+    // Classification stats
+    const critical = diffData.filter(item => item.classification?.decision === 'Critical').length;
+    const minor = diffData.filter(item => item.classification?.decision === 'Minor').length;
+    const formatting = diffData.filter(item => item.classification?.decision === 'Formatting').length;
+    
+    return { added, removed, modified, moved, movedAndModified, equal, critical, minor, formatting, total: diffData.length };
   }, [diffData]);
 
   const getElementIcon = (type: DiffElement['type']) => {
@@ -75,6 +85,31 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       case 'modified': return "outline";
       case 'moved': return "outline";
       case 'moved_and_modified': return "outline";
+    }
+  };
+
+  const getClassificationMeta = (classification?: DiffElement['classification']) => {
+    if (!classification) return null;
+    
+    switch (classification.decision) {
+      case 'Critical':
+        return {
+          label: 'Critical',
+          icon: <AlertTriangle className="h-3 w-3" />,
+          variant: 'destructive' as const
+        };
+      case 'Minor':
+        return {
+          label: 'Minor', 
+          icon: <Info className="h-3 w-3" />,
+          variant: 'default' as const
+        };
+      case 'Formatting':
+        return {
+          label: 'Formatting',
+          icon: <Pilcrow className="h-3 w-3" />,
+          variant: 'secondary' as const
+        };
     }
   };
 
@@ -120,6 +155,30 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                 {stats.equal} Unchanged
               </Badge>
             </div>
+
+            {/* Classification Stats */}
+            {(stats.critical > 0 || stats.minor > 0 || stats.formatting > 0) && (
+              <div className="flex items-center gap-2 border-l pl-3">
+                {stats.critical > 0 && (
+                  <Badge variant="destructive" className="gap-1 text-xs">
+                    <AlertTriangle className="h-3 w-3" />
+                    {stats.critical} Critical
+                  </Badge>
+                )}
+                {stats.minor > 0 && (
+                  <Badge variant="default" className="gap-1 text-xs">
+                    <Info className="h-3 w-3" />
+                    {stats.minor} Minor
+                  </Badge>
+                )}
+                {stats.formatting > 0 && (
+                  <Badge variant="secondary" className="gap-1 text-xs">
+                    <Pilcrow className="h-3 w-3" />
+                    {stats.formatting} Formatting
+                  </Badge>
+                )}
+              </div>
+            )}
             
             <div className="flex items-center gap-1 border-l pl-3">
               <Button
@@ -259,14 +318,23 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                         </div>
                       </div>
                       
-                      <div className="flex-shrink-0">
-                        <Badge 
-                          variant={getBadgeVariant(element.type)} 
-                          className="text-xs"
-                        >
-                          MOVED+MOD
-                        </Badge>
-                      </div>
+                       <div className="flex-shrink-0 flex items-center gap-2">
+                         <Badge 
+                           variant={getBadgeVariant(element.type)} 
+                           className="text-xs"
+                         >
+                           MOVED+MOD
+                         </Badge>
+                         {element.classification && (
+                           <Badge 
+                             variant={getClassificationMeta(element.classification)?.variant || "outline"} 
+                             className="text-xs gap-1"
+                           >
+                             {getClassificationMeta(element.classification)?.icon}
+                             {getClassificationMeta(element.classification)?.label}
+                           </Badge>
+                         )}
+                       </div>
                     </div>
                   </div>
                 );
@@ -327,14 +395,23 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                         </div>
                       </div>
                       
-                      <div className="flex-shrink-0">
-                        <Badge 
-                          variant={getBadgeVariant(element.type)} 
-                          className="text-xs"
-                        >
-                          MODIFIED
-                        </Badge>
-                      </div>
+                       <div className="flex-shrink-0 flex items-center gap-2">
+                         <Badge 
+                           variant={getBadgeVariant(element.type)} 
+                           className="text-xs"
+                         >
+                           MODIFIED
+                         </Badge>
+                         {element.classification && (
+                           <Badge 
+                             variant={getClassificationMeta(element.classification)?.variant || "outline"} 
+                             className="text-xs gap-1"
+                           >
+                             {getClassificationMeta(element.classification)?.icon}
+                             {getClassificationMeta(element.classification)?.label}
+                           </Badge>
+                         )}
+                       </div>
                     </div>
                   </div>
                 );
@@ -369,13 +446,22 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                       ))}
                     </div>
                     
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 flex items-center gap-2">
                       <Badge 
                         variant={getBadgeVariant(element.type)} 
                         className="text-xs"
                       >
                         {element.type === 'moved' ? 'MOVED' : element.type.toUpperCase()}
                       </Badge>
+                      {element.classification && (
+                        <Badge 
+                          variant={getClassificationMeta(element.classification)?.variant || "outline"} 
+                          className="text-xs gap-1"
+                        >
+                          {getClassificationMeta(element.classification)?.icon}
+                          {getClassificationMeta(element.classification)?.label}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </div>
