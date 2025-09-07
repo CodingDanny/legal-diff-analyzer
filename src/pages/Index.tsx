@@ -61,16 +61,15 @@ const Index = () => {
         {!diffData && !isAnalyzing && <div className="relative">
             <Card className="overflow-hidden shadow-lift">
               <div className="relative h-64 md:h-80">
-                <img src={heroImage} alt="Professional legal document analysis workspace" className="w-full h-full object-cover" />
+                <img src={heroImage} alt="Legal document analysis workspace" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-primary/80"></div>
                 <div className="absolute inset-0 flex items-center justify-center text-center text-white p-6">
                   <div className="max-w-3xl space-y-4">
                     <h1 className="text-4xl md:text-5xl font-display font-bold">
-                      Professional Legal Document Analysis
+                      Legal Document Analysis
                     </h1>
                     <p className="text-lg md:text-xl opacity-90 leading-relaxed">
-                      Compare document versions with precision. Identify changes, additions, and removals 
-                      with professional-grade diff analysis tailored for legal professionals.
+                      Compare document versions with precision. Identification and analysis of the changes tailored for legal professionals.
                     </p>
                   </div>
                 </div>
