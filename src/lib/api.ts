@@ -10,7 +10,7 @@ export const analyzePdfDiff = async (file1: File, file2: File): Promise<any> => 
   formData.append('file2', file2);
 
   try {
-    const response = await fetch('/api/pdf-diff', {
+    const response = await fetch('http://localhost:8000/pdf-diff', {
       method: 'POST',
       body: formData,
     });
