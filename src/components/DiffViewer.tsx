@@ -2,8 +2,11 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight, AlertTriangle, Info, Pilcrow } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface DiffElement {
   type: 'unchanged' | 'added' | 'removed' | 'modified' | 'moved' | 'moved_and_modified';
@@ -20,6 +23,11 @@ export interface DiffElement {
   // Classification for changes (all types except unchanged and moved)
   classification?: {
     decision: 'Critical' | 'Minor' | 'Formatting';
+    impact_analysis?: {
+      legal_implications: string;
+      affected_party: string;
+      severity: 'low' | 'medium' | 'high';
+    };
   };
 }
 
@@ -32,6 +40,7 @@ interface DiffViewerProps {
 export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "Updated" }: DiffViewerProps) => {
   const [fontSize, setFontSize] = useState(16);
   const [showLineNumbers, setShowLineNumbers] = useState(true);
+  const isMobile = useIsMobile();
 
   const stats = useMemo(() => {
     const added = diffData.filter(item => item.type === 'added').length;
@@ -105,6 +114,108 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
           className: 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600 no-underline opacity-100 font-semibold'
         };
     }
+  };
+
+  const getSeverityColor = (severity: 'low' | 'medium' | 'high') => {
+    switch (severity) {
+      case 'high': return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium': return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+    }
+  };
+
+  const renderImpactAnalysis = (impactAnalysis: DiffElement['classification']['impact_analysis']) => {
+    if (!impactAnalysis) return null;
+
+    return (
+      <div className="space-y-3">
+        <div>
+          <h4 className="font-medium text-sm mb-2">Impact Analysis</h4>
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Severity:</span>
+            <Badge 
+              variant="outline" 
+              className={cn("text-xs", getSeverityColor(impactAnalysis.severity))}
+            >
+              {impactAnalysis.severity.toUpperCase()}
+            </Badge>
+          </div>
+          
+          <div>
+            <span className="text-xs font-medium text-muted-foreground">Affected Party:</span>
+            <p className="text-sm mt-1">{impactAnalysis.affected_party}</p>
+          </div>
+          
+          <div>
+            <span className="text-xs font-medium text-muted-foreground">Legal Implications:</span>
+            <p className="text-sm mt-1 leading-relaxed">{impactAnalysis.legal_implications}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderClassificationBadge = (classification: DiffElement['classification']) => {
+    if (!classification) return null;
+
+    const meta = getClassificationMeta(classification);
+    if (!meta) return null;
+
+    const badgeContent = (
+      <div 
+        className={cn(
+          "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
+          "decoration-none line-through-none opacity-100 font-bold transform-none",
+          "shadow-sm border cursor-pointer transition-all duration-200",
+          meta.className,
+          classification.impact_analysis && classification.decision === 'Critical' && "hover:scale-105"
+        )}
+        style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
+      >
+        {meta.icon}
+        {meta.label}
+      </div>
+    );
+
+    // Only show impact analysis for Critical changes that have it
+    if (classification.decision === 'Critical' && classification.impact_analysis) {
+      if (isMobile) {
+        return (
+          <Sheet>
+            <SheetTrigger asChild>
+              {badgeContent}
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Critical Change Impact</SheetTitle>
+                <SheetDescription>
+                  Analysis of this critical change and its implications
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-4">
+                {renderImpactAnalysis(classification.impact_analysis)}
+              </div>
+            </SheetContent>
+          </Sheet>
+        );
+      } else {
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              {badgeContent}
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              {renderImpactAnalysis(classification.impact_analysis)}
+            </PopoverContent>
+          </Popover>
+        );
+      }
+    }
+
+    return badgeContent;
   };
 
   return (
@@ -319,20 +430,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                          >
                            MOVED+MOD
                          </Badge>
-                          {element.classification && (
-                            <div 
-                              className={cn(
-                                "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
-                                "decoration-none line-through-none opacity-100 font-bold transform-none",
-                                "shadow-sm border",
-                                getClassificationMeta(element.classification)?.className
-                              )}
-                              style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
-                            >
-                              {getClassificationMeta(element.classification)?.icon}
-                              {getClassificationMeta(element.classification)?.label}
-                            </div>
-                          )}
+                       {renderClassificationBadge(element.classification)}
                        </div>
                     </div>
                   </div>
@@ -401,20 +499,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                          >
                            MODIFIED
                          </Badge>
-                          {element.classification && (
-                            <div 
-                              className={cn(
-                                "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
-                                "decoration-none line-through-none opacity-100 font-bold transform-none",
-                                "shadow-sm border",
-                                getClassificationMeta(element.classification)?.className
-                              )}
-                              style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
-                            >
-                              {getClassificationMeta(element.classification)?.icon}
-                              {getClassificationMeta(element.classification)?.label}
-                            </div>
-                          )}
+                       {renderClassificationBadge(element.classification)}
                        </div>
                     </div>
                   </div>
@@ -457,20 +542,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                       >
                         {element.type === 'moved' ? 'MOVED' : element.type.toUpperCase()}
                       </Badge>
-                       {element.classification && (
-                         <div 
-                           className={cn(
-                             "inline-flex items-center rounded-full px-2 py-1 text-xs gap-1",
-                             "decoration-none line-through-none opacity-100 font-bold transform-none",
-                             "shadow-sm border",
-                             getClassificationMeta(element.classification)?.className
-                           )}
-                           style={{ textDecoration: 'none', opacity: 1, fontWeight: '700' }}
-                         >
-                           {getClassificationMeta(element.classification)?.icon}
-                           {getClassificationMeta(element.classification)?.label}
-                         </div>
-                       )}
+                        {renderClassificationBadge(element.classification)}
                     </div>
                   </div>
                 </div>

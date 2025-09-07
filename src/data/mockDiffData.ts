@@ -18,7 +18,12 @@ export const mockDiffData: DiffElement[] = [
     content: "Client XYZ Corporation, a corporation organized under the laws of New York (\"Client\").",
     old_index: 5,
     classification: {
-      decision: "Critical"
+      decision: "Critical",
+      impact_analysis: {
+        legal_implications: "Changing client entity affects liability allocation and jurisdictional requirements under the agreement.",
+        affected_party: "Both Client and Company",
+        severity: "high"
+      }
     }
   },
   {
@@ -26,7 +31,12 @@ export const mockDiffData: DiffElement[] = [
     content: "Client XYZ International Corporation, a corporation organized under the laws of Delaware with offices in New York and California (\"Client\").",
     new_index: 5,
     classification: {
-      decision: "Critical"
+      decision: "Critical",
+      impact_analysis: {
+        legal_implications: "Entity restructuring may trigger change of control provisions and require additional disclosures.",
+        affected_party: "Client XYZ International Corporation",
+        severity: "high"
+      }
     }
   },
   {
@@ -65,7 +75,12 @@ export const mockDiffData: DiffElement[] = [
     content: "(a) Comprehensive corporate law consultation and strategic planning\n(b) Contract review, drafting, and negotiation support\n(c) Regulatory compliance advice and ongoing monitoring\n(d) Intellectual property consultation and filing assistance\n(e) Employment law guidance and policy development",
     new_index: 16,
     classification: {
-      decision: "Critical"
+      decision: "Critical",
+      impact_analysis: {
+        legal_implications: "Expansion of service scope may require additional licensing and insurance coverage, affecting overall project costs and timelines.",
+        affected_party: "Company primarily, Client secondarily",
+        severity: "low"
+      }
     }
   },
   {
@@ -108,7 +123,12 @@ export const mockDiffData: DiffElement[] = [
       [0, "."]
     ],
     classification: {
-      decision: "Critical"
+      decision: "Critical",
+      impact_analysis: {
+        legal_implications: "Extended termination notice period significantly affects contract flexibility and may increase costs for premature termination scenarios.",
+        affected_party: "Both parties equally",
+        severity: "medium"
+      }
     }
   },
   {
@@ -251,7 +271,12 @@ export const mockDiffData: DiffElement[] = [
       [1, "\n\n9.3 License Grant. Company hereby grants Client a perpetual, irrevocable, worldwide license to use, modify, and distribute any Company methodologies or templates incorporated into the work product."]
     ],
     classification: {
-      decision: "Critical"
+      decision: "Critical",
+      impact_analysis: {
+        legal_implications: "Perpetual licensing of methodologies creates long-term IP exposure and may conflict with future business models or client agreements.",
+        affected_party: "Company",
+        severity: "high"
+      }
     }
   },
   {
