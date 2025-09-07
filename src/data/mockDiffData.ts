@@ -195,9 +195,48 @@ export const mockDiffData: DiffElement[] = [
     new_index: 40
   },
   {
+    type: "moved",
+    old_index: 34,
+    new_index: 42,
+    content: "8. FORCE MAJEURE\n\n8.1 Definition. Neither party shall be liable for any failure or delay in performance under this Agreement if such failure or delay is due to circumstances beyond the reasonable control of that party, including but not limited to acts of God, natural disasters, war, terrorism, labor disputes, or governmental actions.\n\n8.2 Notice and Mitigation. The party affected by a force majeure event shall promptly notify the other party in writing and shall use reasonable efforts to mitigate the effects of such event and to resume performance as soon as reasonably practicable."
+  },
+  {
+    type: "moved_and_modified",
+    old_index: 35,
+    new_index: 43,
+    old_content: "9. INTELLECTUAL PROPERTY\n\n9.1 Work Product. All work product, deliverables, and intellectual property created by Company in the performance of Services shall be the exclusive property of Client.\n\n9.2 Pre-existing Rights. Each party retains ownership of its pre-existing intellectual property rights.",
+    new_content: "9. INTELLECTUAL PROPERTY AND WORK PRODUCT\n\n9.1 Work Product Ownership. All work product, deliverables, reports, analyses, and intellectual property created, developed, or produced by Company specifically in the performance of Services under this Agreement shall become the exclusive property of Client upon payment of all fees due hereunder.\n\n9.2 Pre-existing and General Rights. Each party retains full ownership of its pre-existing intellectual property rights, proprietary methodologies, and general knowledge gained through the performance of this Agreement.\n\n9.3 License Grant. Company hereby grants Client a perpetual, irrevocable, worldwide license to use, modify, and distribute any Company methodologies or templates incorporated into the work product.",
+    similarity: 0.65,
+    inline_diff: [
+      [0, "9. INTELLECTUAL PROPERTY"],
+      [1, " AND WORK PRODUCT"],
+      [0, "\n\n9.1"],
+      [-1, " Work Product. All work product, deliverables,"],
+      [1, " Work Product Ownership. All work product, deliverables, reports, analyses,"],
+      [0, " and intellectual property created"],
+      [1, ", developed, or produced"],
+      [0, " by Company"],
+      [1, " specifically"],
+      [0, " in the performance of Services"],
+      [1, " under this Agreement"],
+      [0, " shall"],
+      [1, " become the"],
+      [0, " exclusive property of Client"],
+      [1, " upon payment of all fees due hereunder"],
+      [0, ".\n\n9.2 Pre-existing"],
+      [1, " and General"],
+      [0, " Rights. Each party retains"],
+      [1, " full"],
+      [0, " ownership of its pre-existing intellectual property rights"],
+      [1, ", proprietary methodologies, and general knowledge gained through the performance of this Agreement"],
+      [0, "."],
+      [1, "\n\n9.3 License Grant. Company hereby grants Client a perpetual, irrevocable, worldwide license to use, modify, and distribute any Company methodologies or templates incorporated into the work product."]
+    ]
+  },
+  {
     type: "unchanged",
     content: ["IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above."],
     old_range: [36, 36],
-    new_range: [41, 41]
+    new_range: [44, 44]
   }
 ];

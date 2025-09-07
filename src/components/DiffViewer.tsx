@@ -2,19 +2,19 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw } from "lucide-react";
+import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface DiffElement {
-  type: 'unchanged' | 'added' | 'removed' | 'modified';
+  type: 'unchanged' | 'added' | 'removed' | 'modified' | 'moved' | 'moved_and_modified';
   content?: string | string[];
   old_index?: number;
   new_index?: number;
   old_range?: [number, number];
   new_range?: [number, number];
-  // For modified type
-  old_content?: string[];
-  new_content?: string[];
+  // For modified and moved_and_modified types
+  old_content?: string | string[];
+  new_content?: string | string[];
   similarity?: number;
   inline_diff?: Array<[number, string]>; // [operation, text] where operation: 0=unchanged, 1=added, -1=removed
 }
@@ -33,8 +33,10 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
     const added = diffData.filter(item => item.type === 'added').length;
     const removed = diffData.filter(item => item.type === 'removed').length;
     const modified = diffData.filter(item => item.type === 'modified').length;
+    const moved = diffData.filter(item => item.type === 'moved').length;
+    const movedAndModified = diffData.filter(item => item.type === 'moved_and_modified').length;
     const equal = diffData.filter(item => item.type === 'unchanged').length;
-    return { added, removed, modified, equal, total: diffData.length };
+    return { added, removed, modified, moved, movedAndModified, equal, total: diffData.length };
   }, [diffData]);
 
   const getElementIcon = (type: DiffElement['type']) => {
@@ -43,6 +45,8 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       case 'removed': return <Minus className="h-4 w-4" />;
       case 'unchanged': return <Equal className="h-4 w-4" />;
       case 'modified': return <RefreshCw className="h-4 w-4" />;
+      case 'moved': return <ArrowRight className="h-4 w-4" />;
+      case 'moved_and_modified': return <RefreshCw className="h-4 w-4" />;
     }
   };
 
@@ -56,6 +60,10 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
         return "bg-diff-equal border-l-4 border-border text-foreground";
       case 'modified':
         return "bg-muted/50 border-l-4 border-primary text-foreground";
+      case 'moved':
+        return "bg-blue-50 dark:bg-blue-950/30 border-l-4 border-blue-400 text-foreground";
+      case 'moved_and_modified':
+        return "bg-blue-50 dark:bg-blue-950/30 border-l-4 border-blue-400 text-foreground";
     }
   };
 
@@ -65,6 +73,8 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       case 'removed': return "destructive";
       case 'unchanged': return "secondary";
       case 'modified': return "outline";
+      case 'moved': return "outline";
+      case 'moved_and_modified': return "outline";
     }
   };
 
@@ -93,10 +103,18 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                 <Minus className="h-3 w-3" />
                 {stats.removed} Removed  
               </Badge>
-              <Badge variant={getBadgeVariant('modified')} className="gap-1">
-                <FileText className="h-3 w-3" />
-                {stats.modified} Modified
-              </Badge>
+               <Badge variant={getBadgeVariant('modified')} className="gap-1">
+                 <RefreshCw className="h-3 w-3" />
+                 {stats.modified} Modified
+               </Badge>
+               <Badge variant={getBadgeVariant('moved')} className="gap-1">
+                 <ArrowRight className="h-3 w-3" />
+                 {stats.moved} Moved
+               </Badge>
+               <Badge variant={getBadgeVariant('moved_and_modified')} className="gap-1">
+                 <RefreshCw className="h-3 w-3" />
+                 {stats.movedAndModified} Moved+Mod
+               </Badge>
               <Badge variant={getBadgeVariant('unchanged')} className="gap-1">
                 <Equal className="h-3 w-3" />
                 {stats.equal} Unchanged
@@ -154,6 +172,9 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                 if (element.type === 'removed' && element.old_index !== undefined) {
                   return `${element.type}-${element.old_index}`;
                 }
+                if ((element.type === 'moved' || element.type === 'moved_and_modified') && element.new_index !== undefined) {
+                  return `${element.type}-${element.new_index}`;
+                }
                 return `${element.type}-${index}`;
               };
 
@@ -176,11 +197,19 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                   const [start, end] = element.new_range;
                   return start === end ? start : `${start}:${end}`;
                 }
+                if ((element.type === 'moved' || element.type === 'moved_and_modified') && element.new_index !== undefined) {
+                  return element.new_index;
+                }
                 return null; // For removed elements, show nothing
               };
 
-              // Special rendering for modified elements (Option 5)
-              if (element.type === 'modified') {
+              // Special rendering for moved_and_modified elements
+              if (element.type === 'moved_and_modified') {
+                const normalizeContent = (content: string | string[] | undefined): string[] => {
+                  if (!content) return [];
+                  return Array.isArray(content) ? content : [content];
+                };
+
                 return (
                   <div
                     key={getElementKey()}
@@ -210,7 +239,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-removed-accent">REMOVED</span>
                           </div>
                           <div className="font-document leading-relaxed line-through opacity-75">
-                            {element.old_content?.map((line, lineIndex) => (
+                            {normalizeContent(element.old_content).map((line, lineIndex) => (
                               <div key={lineIndex}>{line}</div>
                             ))}
                           </div>
@@ -223,7 +252,75 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-added-accent">ADDED</span>
                           </div>
                           <div className="font-document leading-relaxed">
-                            {element.new_content?.map((line, lineIndex) => (
+                            {normalizeContent(element.new_content).map((line, lineIndex) => (
+                              <div key={lineIndex}>{line}</div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex-shrink-0">
+                        <Badge 
+                          variant={getBadgeVariant(element.type)} 
+                          className="text-xs"
+                        >
+                          MOVED+MOD
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Special rendering for modified elements (Option 5)
+              if (element.type === 'modified') {
+                const normalizeContent = (content: string | string[] | undefined): string[] => {
+                  if (!content) return [];
+                  return Array.isArray(content) ? content : [content];
+                };
+                return (
+                  <div
+                    key={getElementKey()}
+                    className={cn(
+                      "relative rounded-md p-4 transition-all duration-200",
+                      "hover:shadow-sm border border-transparent",
+                      getElementStyles(element.type)
+                    )}
+                    style={{ fontSize: `${fontSize}px` }}
+                  >
+                    <div className="flex items-start gap-3">
+                      {showLineNumbers && (
+                        <div className="flex-shrink-0 w-12 text-xs text-muted-foreground font-mono">
+                          {getLineNumber() || ''}
+                        </div>
+                      )}
+                      
+                      <div className="flex-shrink-0 mt-1 opacity-60">
+                        {getElementIcon(element.type)}
+                      </div>
+                      
+                      <div className="flex-1 space-y-3">
+                        {/* Old content (removed) */}
+                        <div className="bg-diff-removed border border-diff-removed-accent/30 rounded p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Minus className="h-3 w-3 text-diff-removed-accent" />
+                            <span className="text-xs font-medium text-diff-removed-accent">REMOVED</span>
+                          </div>
+                          <div className="font-document leading-relaxed line-through opacity-75">
+                            {normalizeContent(element.old_content).map((line, lineIndex) => (
+                              <div key={lineIndex}>{line}</div>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* New content (added) */}
+                        <div className="bg-diff-added border border-diff-added-accent/30 rounded p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Plus className="h-3 w-3 text-diff-added-accent" />
+                            <span className="text-xs font-medium text-diff-added-accent">ADDED</span>
+                          </div>
+                          <div className="font-document leading-relaxed">
+                            {normalizeContent(element.new_content).map((line, lineIndex) => (
                               <div key={lineIndex}>{line}</div>
                             ))}
                           </div>
@@ -277,7 +374,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                         variant={getBadgeVariant(element.type)} 
                         className="text-xs"
                       >
-                        {element.type.toUpperCase()}
+                        {element.type === 'moved' ? 'MOVED' : element.type.toUpperCase()}
                       </Badge>
                     </div>
                   </div>
@@ -293,9 +390,9 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
         <div className="text-center space-y-2">
           <h3 className="font-semibold font-display text-foreground">Analysis Summary</h3>
           <p className="text-sm text-muted-foreground">
-            Processed {stats.total} document sections with {stats.added} additions, {stats.removed} removals, and {stats.modified} modifications
+            Processed {stats.total} document sections with {stats.added} additions, {stats.removed} removals, {stats.modified} modifications, {stats.moved} moves, and {stats.movedAndModified} moved+modified
           </p>
-          <div className="flex justify-center gap-6 pt-2">
+          <div className="flex justify-center gap-4 pt-2">
             <div className="text-center">
               <div className="text-2xl font-bold text-diff-added-accent">{stats.added}</div>
               <div className="text-xs text-muted-foreground">Additions</div>
@@ -307,6 +404,14 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{stats.modified}</div>
               <div className="text-xs text-muted-foreground">Modified</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{stats.moved}</div>
+              <div className="text-xs text-muted-foreground">Moved</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-800">{stats.movedAndModified}</div>
+              <div className="text-xs text-muted-foreground">Moved+Mod</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-muted-foreground">{stats.equal}</div>
