@@ -94,21 +94,21 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
     switch (classification.decision) {
       case 'Critical':
         return {
-          label: 'Critical',
+          label: 'CRITICAL',
           icon: <AlertTriangle className="h-3 w-3" />,
-          variant: 'destructive' as const
+          className: 'bg-red-500 text-white border-red-600 hover:bg-red-600'
         };
       case 'Minor':
         return {
-          label: 'Minor', 
+          label: 'MINOR', 
           icon: <Info className="h-3 w-3" />,
-          variant: 'default' as const
+          className: 'bg-yellow-500 text-white border-yellow-600 hover:bg-yellow-600'
         };
       case 'Formatting':
         return {
-          label: 'Formatting',
+          label: 'FORMATTING',
           icon: <Pilcrow className="h-3 w-3" />,
-          variant: 'secondary' as const
+          className: 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600'
         };
     }
   };
@@ -325,15 +325,17 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                          >
                            MOVED+MOD
                          </Badge>
-                         {element.classification && (
-                           <Badge 
-                             variant={getClassificationMeta(element.classification)?.variant || "outline"} 
-                             className="text-xs gap-1"
-                           >
-                             {getClassificationMeta(element.classification)?.icon}
-                             {getClassificationMeta(element.classification)?.label}
-                           </Badge>
-                         )}
+                          {element.classification && (
+                            <div 
+                              className={cn(
+                                "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                                getClassificationMeta(element.classification)?.className
+                              )}
+                            >
+                              {getClassificationMeta(element.classification)?.icon}
+                              {getClassificationMeta(element.classification)?.label}
+                            </div>
+                          )}
                        </div>
                     </div>
                   </div>
@@ -402,15 +404,17 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                          >
                            MODIFIED
                          </Badge>
-                         {element.classification && (
-                           <Badge 
-                             variant={getClassificationMeta(element.classification)?.variant || "outline"} 
-                             className="text-xs gap-1"
-                           >
-                             {getClassificationMeta(element.classification)?.icon}
-                             {getClassificationMeta(element.classification)?.label}
-                           </Badge>
-                         )}
+                          {element.classification && (
+                            <div 
+                              className={cn(
+                                "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                                getClassificationMeta(element.classification)?.className
+                              )}
+                            >
+                              {getClassificationMeta(element.classification)?.icon}
+                              {getClassificationMeta(element.classification)?.label}
+                            </div>
+                          )}
                        </div>
                     </div>
                   </div>
@@ -453,15 +457,17 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                       >
                         {element.type === 'moved' ? 'MOVED' : element.type.toUpperCase()}
                       </Badge>
-                      {element.classification && (
-                        <Badge 
-                          variant={getClassificationMeta(element.classification)?.variant || "outline"} 
-                          className="text-xs gap-1"
-                        >
-                          {getClassificationMeta(element.classification)?.icon}
-                          {getClassificationMeta(element.classification)?.label}
-                        </Badge>
-                      )}
+                       {element.classification && (
+                         <div 
+                           className={cn(
+                             "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold gap-1 no-underline",
+                             getClassificationMeta(element.classification)?.className
+                           )}
+                         >
+                           {getClassificationMeta(element.classification)?.icon}
+                           {getClassificationMeta(element.classification)?.label}
+                         </div>
+                       )}
                     </div>
                   </div>
                 </div>
