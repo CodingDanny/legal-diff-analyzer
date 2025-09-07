@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight, AlertTriangle, Info, Pilcrow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MarkdownContent } from "@/components/MarkdownContent";
 
 export interface DiffElement {
   type: 'unchanged' | 'added' | 'removed' | 'modified' | 'moved' | 'moved_and_modified';
@@ -403,9 +404,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-removed-accent">REMOVED</span>
                           </div>
                           <div className="font-document leading-relaxed line-through opacity-75">
-                            {normalizeContent(element.old_content).map((line, lineIndex) => (
-                              <div key={lineIndex}>{line}</div>
-                            ))}
+                            <MarkdownContent content={element.old_content || ''} />
                           </div>
                         </div>
                         
@@ -416,9 +415,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-added-accent">ADDED</span>
                           </div>
                           <div className="font-document leading-relaxed">
-                            {normalizeContent(element.new_content).map((line, lineIndex) => (
-                              <div key={lineIndex}>{line}</div>
-                            ))}
+                            <MarkdownContent content={element.new_content || ''} />
                           </div>
                         </div>
                       </div>
@@ -472,9 +469,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-removed-accent">REMOVED</span>
                           </div>
                           <div className="font-document leading-relaxed line-through opacity-75">
-                            {normalizeContent(element.old_content).map((line, lineIndex) => (
-                              <div key={lineIndex}>{line}</div>
-                            ))}
+                            <MarkdownContent content={element.old_content || ''} />
                           </div>
                         </div>
                         
@@ -485,9 +480,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                             <span className="text-xs font-medium text-diff-added-accent">ADDED</span>
                           </div>
                           <div className="font-document leading-relaxed">
-                            {normalizeContent(element.new_content).map((line, lineIndex) => (
-                              <div key={lineIndex}>{line}</div>
-                            ))}
+                            <MarkdownContent content={element.new_content || ''} />
                           </div>
                         </div>
                       </div>
@@ -528,11 +521,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
                     </div>
                     
                     <div className={cn("flex-1 font-document leading-relaxed", element.type === 'removed' && "line-through opacity-75")}>
-                      {getDisplayContent().split('\n').map((line, lineIndex) => (
-                        <div key={lineIndex}>
-                          {line || <br />}
-                        </div>
-                      ))}
+                      <MarkdownContent content={getDisplayContent() || ''} />
                     </div>
                     
                     <div className="flex-shrink-0 flex items-center gap-2">
