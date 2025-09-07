@@ -1,8 +1,6 @@
 import { Scale, FileSearch } from "lucide-react";
-
 export const Header = () => {
-  return (
-    <header className="border-b bg-card shadow-elegant">
+  return <header className="border-b bg-card shadow-elegant">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -16,11 +14,10 @@ export const Header = () => {
           </div>
           
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FileSearch className="h-4 w-4" />
-            <span>Secure • Confidential • Professional</span>
+            
+            
           </div>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
