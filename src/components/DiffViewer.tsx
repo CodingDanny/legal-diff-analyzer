@@ -78,14 +78,8 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
   };
 
   const getBadgeVariant = (type: DiffElement['type']): "default" | "secondary" | "destructive" | "outline" => {
-    switch (type) {
-      case 'added': return "default";
-      case 'removed': return "destructive";
-      case 'unchanged': return "secondary";
-      case 'modified': return "outline";
-      case 'moved': return "outline";
-      case 'moved_and_modified': return "outline";
-    }
+    // All change type badges now use the same gray styling as MODIFIED
+     return "outline";
   };
 
   const getClassificationMeta = (classification?: DiffElement['classification']) => {
