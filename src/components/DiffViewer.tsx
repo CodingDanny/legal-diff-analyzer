@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut } from "lucide-react";
+import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface DiffElement {
@@ -42,7 +42,7 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       case 'added': return <Plus className="h-4 w-4" />;
       case 'removed': return <Minus className="h-4 w-4" />;
       case 'unchanged': return <Equal className="h-4 w-4" />;
-      case 'modified': return <FileText className="h-4 w-4" />;
+      case 'modified': return <RefreshCw className="h-4 w-4" />;
     }
   };
 
