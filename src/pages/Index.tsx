@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { DocumentUpload } from "@/components/DocumentUpload";
 import { DiffViewer, DiffElement } from "@/components/DiffViewer";
 import { LoadingAnalysis } from "@/components/LoadingAnalysis";
-import { mockDiffData } from "@/data/mockDiffData";
+import { analyzePdfDiff } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { FileText, Sparkles, Shield, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -36,16 +36,25 @@ const Index = () => {
       });
       return;
     }
+    
     setIsAnalyzing(true);
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 6000));
-    setDiffData(mockDiffData);
-    setIsAnalyzing(false);
-    toast({
-      title: "Analysis Complete",
-      description: "Your document comparison has been successfully generated."
-    });
+    try {
+      const result = await analyzePdfDiff(oldFile.file, newFile.file);
+      setDiffData(result);
+      toast({
+        title: "Analysis Complete",
+        description: "Your document comparison has been successfully generated."
+      });
+    } catch (error) {
+      toast({
+        title: "Analysis Failed",
+        description: "There was an error analyzing your documents. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
   const handleReset = () => {
     setOldFile(null);
