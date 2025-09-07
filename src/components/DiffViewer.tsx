@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { FileText, Plus, Minus, Equal, Eye, ZoomIn, ZoomOut, RefreshCw, ArrowRight, AlertTriangle, Info, Pilcrow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -41,7 +42,15 @@ interface DiffViewerProps {
 export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "Updated" }: DiffViewerProps) => {
   const [fontSize, setFontSize] = useState(16);
   const [showLineNumbers, setShowLineNumbers] = useState(true);
+  const [showOnlyChanges, setShowOnlyChanges] = useState(false);
   const isMobile = useIsMobile();
+
+  const filteredData = useMemo(() => {
+    if (showOnlyChanges) {
+      return diffData.filter(item => item.type !== 'unchanged');
+    }
+    return diffData;
+  }, [diffData, showOnlyChanges]);
 
   const stats = useMemo(() => {
     const added = diffData.filter(item => item.type === 'added').length;
@@ -316,17 +325,34 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
       {/* Diff Content */}
       <Card className="shadow-document">
         <div className="border-b bg-muted/30 px-6 py-3">
-          <h3 className="font-semibold font-display text-foreground">
-            Updated Document with Highlighted Changes
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Green sections are additions, red sections are removals, modified sections show old and new versions
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold font-display text-foreground">
+                Updated Document with Highlighted Changes
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Green sections are additions, red sections are removals, modified sections show old and new versions
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={showOnlyChanges}
+                onCheckedChange={setShowOnlyChanges}
+                id="show-only-changes"
+              />
+              <label
+                htmlFor="show-only-changes"
+                className="text-sm font-medium cursor-pointer"
+              >
+                Show only changes
+              </label>
+            </div>
+          </div>
         </div>
         
         <div className="max-h-[70vh] overflow-auto scrollbar-thin">
           <div className="p-6 space-y-1">
-            {diffData.map((element, index) => {
+            {filteredData.map((element, index) => {
               const getElementKey = () => {
                 if (element.type === 'unchanged' && element.new_range) {
                   return `${element.type}-${element.new_range[0]}-${element.new_range[1]}`;
