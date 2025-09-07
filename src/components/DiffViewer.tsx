@@ -479,42 +479,6 @@ export const DiffViewer = ({ diffData, oldFileName = "Original", newFileName = "
           </div>
         </div>
       </Card>
-      
-      {/* Summary Card */}
-      <Card className="p-6 bg-gradient-subtle shadow-elegant">
-        <div className="text-center space-y-2">
-          <h3 className="font-semibold font-display text-foreground">Analysis Summary</h3>
-          <p className="text-sm text-muted-foreground">
-            Processed {stats.total} document sections with {stats.added} additions, {stats.removed} removals, {stats.modified} modifications, {stats.moved} moves, and {stats.movedAndModified} moved+modified
-          </p>
-          <div className="flex justify-center gap-4 pt-2">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-diff-added-accent">{stats.added}</div>
-              <div className="text-xs text-muted-foreground">Additions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-diff-removed-accent">{stats.removed}</div>
-              <div className="text-xs text-muted-foreground">Deletions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{stats.modified}</div>
-              <div className="text-xs text-muted-foreground">Modified</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{stats.moved}</div>
-              <div className="text-xs text-muted-foreground">Moved</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-800">{stats.movedAndModified}</div>
-              <div className="text-xs text-muted-foreground">Moved+Mod</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-muted-foreground">{stats.equal}</div>
-              <div className="text-xs text-muted-foreground">Unchanged</div>
-            </div>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 };
